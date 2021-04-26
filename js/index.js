@@ -24,7 +24,7 @@ function main() {
     {
         const skyColor = 0x000000;  // black
         const groundColor = 0xB97A20;  // brownish orange
-        const intensity = 1;
+        const intensity = 0.5;
         const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
         scene.add(light);
     }
@@ -38,7 +38,6 @@ function main() {
         scene.add(light.target);
     }
     addLight(-20, 20, 20)
-    addLight(-20, -20, 20)
 
     const models = {
         player: {
