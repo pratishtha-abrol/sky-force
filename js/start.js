@@ -44,8 +44,11 @@ function main() {
         scene.add(light);
         scene.add(light.target);
     }
-    addLight(-20, 20, 20)
-    addLight(0,10,0);
+    addLight(-20, 0, 0)
+    addLight(20, 0, 0)
+    addLight(0,-10,0);
+    addLight(-30, 10, 60);
+    addLight(30, 10, 60);
 
     const models = {
         player: {
@@ -141,8 +144,12 @@ function main() {
     }
 
     function render() {
+        if (!gameOver) {
+            document.getElementById("variable-content").style.visibility = 'hidden';
+        }
         if (health === 0) {
             gameOver = true;
+            document.getElementById("variable-content").style.visibility = 'visible';
         }
 
         if (resizeRendererToDisplaySize(renderer)) {
