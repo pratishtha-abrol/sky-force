@@ -10,6 +10,9 @@ function main() {
     const players = [];
     var count=0;
     var shoot = false;
+    var score = 0;
+    var health = 1000;
+    var gameOver;
 
     const fov = 90;
     const aspect = 2;
@@ -138,6 +141,10 @@ function main() {
     }
 
     function render() {
+        if (health === 0) {
+            gameOver = true;
+        }
+
         if (resizeRendererToDisplaySize(renderer)) {
             const canvas = renderer.domElement;
             camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -166,22 +173,22 @@ function main() {
         function move (val) {
             for (var i=0; i<players.length;i++) {
                 //update player[i]
-                if (val === 1) {
+                if (val === 1 && !gameOver) {
                     if (players[i].position.x < 30) {
                         players[i].position.x += 0.002;
                     }
                 }
-                if (val === 2) {
+                if (val === 2 && !gameOver) {
                     if (players[i].position.x > -30) {
                         players[i].position.x -= 0.002;
                     }
                 }
-                if (val === 3) {
+                if (val === 3 && !gameOver) {
                     if (players[i].position.z < 70) {
                         players[i].position.z += 0.002;
                     }
                 }
-                if (val === 4) {
+                if (val === 4 && !gameOver) {
                     if (players[i].position.z > -15) {
                         players[i].position.z -= 0.002;
                     }
@@ -189,23 +196,58 @@ function main() {
             }         
         }
         for (var i=0; i<enemies.length;i++) {
-            if (enemies[i].position.z > -15) {
+            if (enemies[i].position.z > -15  && !gameOver) {
                 enemies[i].position.z -= 0.1;
             } else {
-                enemies[i].position.x = (Math.random() * 60) - 30;
-                enemies[i].position.y = 0;
-                enemies[i].position.z = (Math.random() * 50) + 20;
+                if (!gameOver) {
+                    enemies[i].position.x = (Math.random() * 60) - 30;
+                    enemies[i].position.y = 0;
+                    enemies[i].position.z = (Math.random() * 50) + 20;
+                }
             }
         }
         for (var i=0; i<stars.length;i++) {
-            if (stars[i].position.z > -15) {
+            if (stars[i].position.z > -15  && !gameOver) {
                 stars[i].position.z -= 0.1;
             } else {
-                stars[i].position.x = (Math.random() * 60) - 30;
-                stars[i].position.y = 0;
-                stars[i].position.z = (Math.random() * 50) + 20;
+                if (!gameOver) {
+                    stars[i].position.x = (Math.random() * 60) - 30;
+                    stars[i].position.y = 0;
+                    stars[i].position.z = (Math.random() * 50) + 20;
+                }
             }
         }
+
+        // Collision handling
+        {
+            // player and star
+            for (var i=0; i<players.length; i++) {
+                for (var j=0; j<stars.length; j++) {
+                    if (stars[j].position.z < players[i].position.z + 5 && stars[j].position.z < players[i].position.z + 5 && stars[j].position.x < players[i].position.x + 3 && stars[j].position.x > players[i].position.x- 3 && stars[j].position.y < players[i].position.y + 1.5 && stars[j].position.y > players[i].position.y- 1.5) {
+                        score += 10;
+                        document.getElementById("score").innerHTML = score;
+                        stars[j].position.x = (Math.random() * 60) - 30;
+                        stars[j].position.y = 0;
+                        stars[j].position.z = (Math.random() * 50) + 20;
+                    }
+                }
+            }
+
+            // player and enemy
+            for (var i=0; i<players.length; i++) {
+                for (var j=0; j<enemies.length; j++) {
+                    if (enemies[j].position.z < players[i].position.z + 5 && enemies[j].position.z < players[i].position.z + 5 && enemies[j].position.x < players[i].position.x + 5 && enemies[j].position.x > players[i].position.x- 5 && enemies[j].position.y < players[i].position.y + 3 && enemies[j].position.y > players[i].position.y- 3) {
+                        health -= 10;
+                        document.getElementById("health").innerHTML = health;
+                        enemies[j].position.x = (Math.random() * 60) - 30;
+                        enemies[j].position.y = 0;
+                        enemies[j].position.z = (Math.random() * 50) + 20;
+                    }
+                }
+            }
+        }
+
+
         renderer.render(scene, camera);
         requestAnimationFrame(render);
         // console.log(camera.position)
