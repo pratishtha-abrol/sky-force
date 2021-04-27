@@ -127,8 +127,41 @@ function main() {
             camera.aspect = canvas.clientWidth / canvas.clientHeight;
             camera.updateProjectionMatrix();
         }
-        for (var i=0; i<players.length;i++) {
-            //update player[i]
+        window.addEventListener('keydown', function(e) {
+            var key = e.code;
+            // console.log(key, e.code)
+            if (key === 'ArrowLeft') {
+                move(1);
+            }
+            if (key === 'ArrowRight') {
+                move(2);
+            }
+            if (key === 'ArrowUp') {
+                move(3);
+            }
+            if (key === 'ArrowDown') {
+                move(4);
+            }
+            // if (key === 'KeyF') {
+
+            // }
+        })
+        function move (val) {
+            for (var i=0; i<players.length;i++) {
+                //update player[i]
+                if (val === 1) {
+                    players[i].position.x += 0.002;
+                }
+                if (val === 2) {
+                    players[i].position.x -= 0.002;
+                }
+                if (val === 3) {
+                    players[i].position.z += 0.002;
+                }
+                if (val === 4) {
+                    players[i].position.z -= 0.002;
+                }
+            }            
         }
         for (var i=0; i<enemies.length;i++) {
             if (enemies[i].position.z > -15) {
