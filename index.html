@@ -3,14 +3,77 @@
 	<head>
 		<meta charset=utf-8>
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<title>SkyForce</title>
+		<title>Pratishtha Abrol | SkyForce</title>
+		<link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700" rel="stylesheet">
+		<script id="vertexShader" type="x-shader/x-vertex">
+			attribute float gray;
+        	varying float v_gray;
+			void main(){
+				v_gray = gray;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0);
+			}
+		</script>
+		
+		<script id="fragmentShader" type="x-shader/x-fragment">
+        	uniform vec3 color;
+        	varying float v_gray;
+        	void main() {
+        		gl_FragColor = vec4(color, 1.0);
+        	}
+		</script>
+		<script id="fragmentShader_gray" type="x-shader/x-fragment">
+        	uniform vec3 color;
+        	void main() {
+        		float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+				gl_FragColor = vec4(vec3(gray), 1.0);
+        	}
+		</script>
 		<style>
-			body { margin: 0; overflow: hidden;}
+			body { margin: 0; }
 			canvas { width: 100%; height: 100% }
 		</style>
-        <canvas id="c" width=100% height=100%></canvas>
+		<link href="style.css" rel="stylesheet">
+        <!-- <canvas id="c" width=100% height=100%></canvas> -->
 	</head>
 	<body>
-    <script type="module" src="js/index.js"></script>
+    <!-- <script type="module" src="js/index.js"></script> -->
+	<script type="module" src="js/start.js"></script>
+	<div class="panel">
+		<div class="game-title">
+			<div class="title">SkyForce</div>
+		</div>
+		<div class="game-title">
+			<label>Score</label>
+			<p id="score">0</p>
+			<label>Health</label>
+			<p id="health">1000</p>
+		</div>
+		<table id="controls">
+			<tr>
+				<td>Up:</td>
+				<td>Move forward</td>
+			</tr>
+			<tr>
+				<td>Left:</td>
+				<td>Move left</td>
+			</tr>
+			<tr>
+				<td>Right:</td>
+				<td>Move right</td>
+			</tr>
+			<tr>
+				<td>Down:</td>
+				<td>Move downward</td>
+			</tr>
+			<tr>
+				<td>f:</td>
+				<td>Fire</td>
+			</tr>
+		</table>
+		<div class="animate-flicker" id="variable-content">Press any button to begin</div>
+	</div>
+	<div id="canvas">
+		<canvas id="c"></canvas>
+	</div>
 	</body>
 </html>
