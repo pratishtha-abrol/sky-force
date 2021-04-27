@@ -8,6 +8,8 @@ function main() {
     const renderer = new THREE.WebGLRenderer({canvas});
 
     const players = [];
+    var count=0;
+    var shoot = false;
 
     const fov = 90;
     const aspect = 2;
@@ -40,15 +42,24 @@ function main() {
         scene.add(light.target);
     }
     addLight(-20, 20, 20)
+    addLight(0,10,0);
 
     const models = {
         player: {
-            obj: 'assets/fighter.obj',
-            mtl: 'assets/fighter.mtl',
+            obj: "assets/fighter.obj",
+            mtl: "assets/fighter.mtl",
         },
         enemy: {
             obj: "assets/flare_Hub.obj",
             mtl: "assets/flare_Hub.mtl"
+        },
+        star: {
+            obj: "assets/star.obj",
+            mtl: "assets/star.mtl"
+        },
+        bullet: {
+            obj: "assets/bullet.obj",
+            mtl: "assets/bullet.mtl"
         }
     }
 
@@ -84,20 +95,25 @@ function main() {
             });
         });
     }
+
+    var stars = []
+
+    for (var i=0; i<10; i++) {
+        const mtlLoader = new MTLLoader();
+        mtlLoader.load('assets/star.mtl', (mtl) => {
+            mtl.preload();
+            const objLoader = new OBJLoader();
+            objLoader.setMaterials(mtl);
+            objLoader.load('assets/star.obj', (star) => {
+                star.position.x = (Math.random() * 60) - 30;
+                star.position.y = 0;
+                star.position.z = (Math.random() * 50) + 20;
+                scene.add(star);
+                stars.push(star);
+            });
+        });
+    }
     
-    // {
-    //     const mtlLoader = new MTLLoader();
-    //     for (const model of Object.values(models)) {
-    //         mtlLoader.load(model.mtl, (mtl) => {
-    //             mtl.preload();
-    //             const objLoader = new OBJLoader();
-    //             objLoader.setMaterials(mtl);
-    //             objLoader.load(model.obj, (root) => {
-    //                 scene.add(root);
-    //             });
-    //         });
-    //     }
-    // }
 
     {
         const loader = new THREE.TextureLoader();
@@ -143,25 +159,34 @@ function main() {
                 move(4);
             }
             // if (key === 'KeyF') {
-
+            //     count++;
+            //     shoot = true;
             // }
         })
         function move (val) {
             for (var i=0; i<players.length;i++) {
                 //update player[i]
                 if (val === 1) {
-                    players[i].position.x += 0.002;
+                    if (players[i].position.x < 30) {
+                        players[i].position.x += 0.002;
+                    }
                 }
                 if (val === 2) {
-                    players[i].position.x -= 0.002;
+                    if (players[i].position.x > -30) {
+                        players[i].position.x -= 0.002;
+                    }
                 }
                 if (val === 3) {
-                    players[i].position.z += 0.002;
+                    if (players[i].position.z < 70) {
+                        players[i].position.z += 0.002;
+                    }
                 }
                 if (val === 4) {
-                    players[i].position.z -= 0.002;
+                    if (players[i].position.z > -15) {
+                        players[i].position.z -= 0.002;
+                    }
                 }
-            }            
+            }         
         }
         for (var i=0; i<enemies.length;i++) {
             if (enemies[i].position.z > -15) {
@@ -170,6 +195,15 @@ function main() {
                 enemies[i].position.x = (Math.random() * 60) - 30;
                 enemies[i].position.y = 0;
                 enemies[i].position.z = (Math.random() * 50) + 20;
+            }
+        }
+        for (var i=0; i<stars.length;i++) {
+            if (stars[i].position.z > -15) {
+                stars[i].position.z -= 0.1;
+            } else {
+                stars[i].position.x = (Math.random() * 60) - 30;
+                stars[i].position.y = 0;
+                stars[i].position.z = (Math.random() * 50) + 20;
             }
         }
         renderer.render(scene, camera);
